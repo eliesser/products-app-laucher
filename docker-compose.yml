@@ -16,7 +16,7 @@ services:
     command: npm run start:dev
     environment: 
       - PORT=3000
-      - NATS_SERVERS=nats://nats-server:4222
+      - NATS_SERVERS=${NATS_SERVERS}
 
   products-ms:
     build: ./products-ms
@@ -27,7 +27,7 @@ services:
     command: npm run start:dev
     environment: 
       - PORT=3001
-      - NATS_SERVERS=nats://nats-server:4222
+      - NATS_SERVERS=${NATS_SERVERS}
       - DATABASE_URL=file:./dev.db
 
   orders-ms:
@@ -41,7 +41,7 @@ services:
     command: npm run start:dev
     environment: 
       - PORT=3002
-      - NATS_SERVERS=nats://nats-server:4222
+      - NATS_SERVERS=${NATS_SERVERS}
       - DATABASE_URL=postgresql://postgres:123456@orders-db:5432/orderdb?schema=public
   
   orders-db:
@@ -66,9 +66,20 @@ services:
     command: npm run start:dev
     environment: 
       - PORT=${PAYMENTS_PORT}
-      - NATS_SERVERS=nats://nats-server:4222
+      - NATS_SERVERS=${NATS_SERVERS}
       - STRIPE_SECRET=${PAYMENTS_STRIPE_SECRET}
       - STRIPE_SUCCESS_URL=${PAYMENTS_STRIPE_SUCCESS_URL}
       - STRIPE_CANCEL_URL=${PAYMENTS_STRIPE_CANCEL_URL}
       - STRIPE_ENDPOINT_SECRET_TEST=${PAYMENTS_STRIPE_ENDPOINT_SECRET_TEST}
       - STRIPE_ENDPOINT_SECRET=${PAYMENTS_STRIPE_ENDPOINT_SECRET}
+
+  auth-ms:
+    build: ./auth-ms
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    volumes:
+      - ./auth-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment: 
+      - PORT=${AUTH_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
