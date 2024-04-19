@@ -18,6 +18,19 @@ services:
       - PORT=3000
       - NATS_SERVERS=${NATS_SERVERS}
 
+  auth-ms:
+    build: ./auth-ms
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    volumes:
+      - ./auth-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment: 
+      - PORT=${AUTH_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+
   products-ms:
     build: ./products-ms
     ports:
@@ -72,14 +85,3 @@ services:
       - STRIPE_CANCEL_URL=${PAYMENTS_STRIPE_CANCEL_URL}
       - STRIPE_ENDPOINT_SECRET_TEST=${PAYMENTS_STRIPE_ENDPOINT_SECRET_TEST}
       - STRIPE_ENDPOINT_SECRET=${PAYMENTS_STRIPE_ENDPOINT_SECRET}
-
-  auth-ms:
-    build: ./auth-ms
-    ports:
-      - ${AUTH_PORT}:${AUTH_PORT}
-    volumes:
-      - ./auth-ms/src:/usr/src/app/src
-    command: npm run start:dev
-    environment: 
-      - PORT=${AUTH_PORT}
-      - NATS_SERVERS=${NATS_SERVERS}
